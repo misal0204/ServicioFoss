@@ -28,11 +28,16 @@ import log.log_event;
 
 public class File_Processs {
 
-    private String name_file_foss="foss_mini.csv";
+    private final String name_path_foss = "P_PATH_FOSS";
+    private final String name_path_foss_copy = "P_PATH_FOSS_C";
+    private String name_file_foss = "foss_mini.csv";
+
     //public String fichero = "D:/Harisa/Librerias para CSV y Java/Servicio de windows/foss_mini.csv";
     //public String fichero_salida = "D:/Harisa/Librerias para CSV y Java/Servicio de windows/salida/";
-    public String fichero = "";
-    public String fichero_salida = "";
+    public String fichero = new DBReadParameters().Readparameters(name_path_foss) + name_file_foss;
+    public String fichero_salida = new DBReadParameters().Readparameters(name_path_foss_copy);
+    public String pais_foss = new DBReadParameters().Readparameters(name_path_foss);
+
     public String campo;
     public String valor;
     public String mensaje_log = "";
@@ -56,8 +61,6 @@ public class File_Processs {
             };
     private String[] nombre_resultado
             = {"Constituent1", "Constituent2", "Constituent3", "Constituent4"};
-    private String[] nombre_analisis
-            = {"P", "H", "C", "G"};
 
     private final int fila_default = 4;
 
@@ -66,6 +69,8 @@ public class File_Processs {
     private int count_resultados = 0;
     private int cabecera = 1;
     private int count_filas = 0;
+    private int ingresar=0;
+    private int registro=0;
     private String fecha_muestra;
     private String tipo_analisis;
 
@@ -75,7 +80,12 @@ public class File_Processs {
             Connection con = db.Connect();
             Statement q;
             q = con.createStatement();
+
+            Calendar fecha = new GregorianCalendar();
+            int anno = fecha.get(Calendar.YEAR);
+
             String muestra = null;
+            String muestra_nueva = null;
             String t, tipo = null;
             String countAnalisis = null;
 
@@ -89,9 +99,6 @@ public class File_Processs {
 
                 valores_csv.add(new FileCSV(cam, val));
             }
-
-            mensaje_log = "|-|Documento leido";
-
             read_csv.close();
 
             for (FileCSV file : valores_csv) {
@@ -99,7 +106,13 @@ public class File_Processs {
 
                 if (file.getCampo().length() > 15) {
                     String c = file.getCampo();
-
+                    //Verificar si existe registro
+                    
+                    if(ingresar != 0)
+                    {
+                        
+                    }
+                    
                     campo_raiz = new StringBuffer(c.substring(0, 32));
 
                     StringBuffer campo_comparar = campo_raiz.append(valores_campos[count_campos]);
@@ -108,10 +121,17 @@ public class File_Processs {
                         if (valores_campos[count_campos].equals(valores_campos[0])) {
                             muestra = file.getValor();
                             fecha_muestra = c.substring(12, 31);
-                            //System.out.println(fecha_muestra);
+                            muestra_nueva = muestra;
+                            //cambiar parametro "2015" por la variable anno
+                            //muestra_nueva = muestra.replace(String.valueOf("anno"), "SV01");
+                            muestra_nueva = muestra.replace(String.valueOf("2015"), "M201");
+
+                            mensaje_log = "|-|Muestra ingresada: "+muestra_nueva+" ";
+
                         } else if (valores_campos[count_campos].equals(valores_campos[1])) {
                             t = file.getValor();
                             tipo = t.equals("Harina de Trigo") ? "H" : "T";
+
                         } else if (valores_campos[count_campos].equals(valores_campos[2])) {
                             countAnalisis = file.getValor();
                             cabecera = 1;
@@ -126,12 +146,12 @@ public class File_Processs {
 
                                 if (tipo_analisis.equals("Proteina")) {
                                     count_filas++;
-                                    insertSMFossv(q, cabecera, countAnalisis, muestra, tipo, count_filas, fecha_muestra, tipo_analisis, c, file.getValor());
+                                    insertSMFossv(q, cabecera, countAnalisis, muestra_nueva, muestra, tipo, count_filas, fecha_muestra, tipo_analisis, c, file.getValor());
                                     count_filas = count_filas == 4 ? 0 : count_filas;
                                 } else {
                                     count_filas++;
                                     cabecera = 2;
-                                    insertSMFossv(q, cabecera, countAnalisis, muestra, tipo, count_filas, fecha_muestra, tipo_analisis, c, file.getValor());
+                                    insertSMFossv(q, cabecera, countAnalisis, muestra_nueva, muestra, tipo, count_filas, fecha_muestra, tipo_analisis, c, file.getValor());
                                     count_filas = count_filas == fila_default ? 0 : count_filas;
                                 }
                             }
@@ -145,6 +165,8 @@ public class File_Processs {
                 }
             }
             //copyFile(fichero, fichero_salida);
+            //CreateFile(valores_csv);
+
             mensaje_log += " |-|Inserción de datos realizado|-| ";
             q.close();
             con.close();
@@ -163,7 +185,6 @@ public class File_Processs {
     }
 
     public void CreateFile(List<FileCSV> lista) {
-
         String outputFile = fichero_salida;
         String Nombre_archivo;
 
@@ -219,19 +240,19 @@ public class File_Processs {
             StandardCopyOption.COPY_ATTRIBUTES
         };
 
-        if (alreadyExists) {
-            System.out.println("Se modificará el archivo");
+        if (alreadyExists) {         
+            //System.out.println("Se modificará el archivo");
 
             Files.deleteIfExists(TO);
-
             Files.copy(FROM, TO, options);
             Files.deleteIfExists(FROM);
+            new log_event().LogFoss("Copia de registro");
 
         } else {
-            System.out.println("Se creará el archivo");
-
+            //System.out.println("Se creará el archivo");
             Files.copy(FROM, TO, options);
             Files.deleteIfExists(FROM);
+            new log_event().LogFoss("Creación de registro");
         }
     }
 
@@ -245,13 +266,13 @@ public class File_Processs {
         return size;
     }
 
-    public void insertSMFossv(Statement query, int cab, String count, String muestra, String t, int c_fila, String fecha, String t_analisis, String campo, String valor) throws SQLException {
+    public void insertSMFossv(Statement query, int cab, String count, String muestra, String nueva_mues, String t, int c_fila, String fecha, String t_analisis, String campo, String valor) throws SQLException {
         Double campo_valor = Double.parseDouble(valor);
 
         switch (cab) {
             case 1:
-                query.executeUpdate("INSERT INTO SM_FOSS(IDPAIS,IDPLANTA,COUNTANALISIS,IDMUESTRA,IDTIPO,LINEA,VALOR1,TIME_ANALISIS) "
-                        + "VALUES('SV','SV01','" + count + "','" + muestra + "','" + t + "'," + c_fila + "," + campo_valor + ",TO_DATE('" + fecha + "','YYYY-MM-DD HH24:MI:SS'))");
+                query.executeUpdate("INSERT INTO SM_FOSS(IDPAIS,IDPLANTA,COUNTANALISIS,IDMUESTRA_ORIGINAL,IDMUESTRA,IDTIPO,LINEA,VALOR1,TIME_ANALISIS) "
+                        + "VALUES('SV','SV01','" + count + "','" + nueva_mues + "','" + muestra + "','" + t + "'," + c_fila + "," + campo_valor + ",TO_DATE('" + fecha + "','YYYY-MM-DD HH24:MI:SS'))");
                 System.out.println(valor);
                 break;
             case 2:
@@ -269,5 +290,11 @@ public class File_Processs {
                 System.out.println(valor);
                 break;
         }
+    }
+
+    public int findMuestra(Statement query,String cam)
+    {
+        String campo_evaluar="RD/12417419/2015-08-26 17:10:52/Constituent4/PasswordRequired=Bool";
+        return 0;
     }
 }
