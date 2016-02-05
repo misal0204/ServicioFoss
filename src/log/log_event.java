@@ -40,11 +40,7 @@ public class log_event {
                 bw.newLine();
                 bw.write(fh);
                 bw.newLine();
-                bw.write("Inicio: " + inicio);
-                bw.newLine();
                 bw.write(mensaje);
-                bw.newLine();
-                bw.write("Finalizado: " + fin);
                 bw.newLine();
                 bw.write("------------------------------------------");
 
@@ -57,11 +53,7 @@ public class log_event {
                 bw = new BufferedWriter(new FileWriter(file));
                 bw.write(MensajeInicio);
                 bw.newLine();
-                bw.write("Inicio: " + inicio);
-                bw.newLine();
                 bw.write(mensaje);
-                bw.newLine();
-                bw.write("Finalizado: " + fin);
                 bw.newLine();
                 bw.write("------------------------------------------");
 
