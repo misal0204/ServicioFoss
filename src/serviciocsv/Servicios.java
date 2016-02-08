@@ -14,8 +14,8 @@ import procesos.File_Processs;
  */
 public class Servicios {
 
-    private int segundos_read = 45;
-    private int segundos_copy = 60;
+    private int segundos_read = 120;
+    private int segundos_copy = 240;
     Timer tiempo_notificacion;
     
     Servicios()
@@ -29,8 +29,8 @@ public class Servicios {
         Calendar calendar_copy = Calendar.getInstance();
 
         //calendar_copy.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
-        calendar_copy.set(Calendar.HOUR, 9);
-        calendar_copy.set(Calendar.MINUTE, 16);
+        calendar_copy.set(Calendar.HOUR, 10);
+        calendar_copy.set(Calendar.MINUTE, 15);
         calendar_copy.set(Calendar.SECOND, 0);
         calendar_copy.set(Calendar.MILLISECOND, 0);
 
@@ -63,9 +63,9 @@ public class Servicios {
 
         Calendar calendar_read_csv = Calendar.getInstance();
 
-        //calendar_read_csv.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
+       //calendar_read_csv.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
         calendar_read_csv.set(Calendar.HOUR_OF_DAY, 9);
-        calendar_read_csv.set(Calendar.MINUTE, 15);
+        calendar_read_csv.set(Calendar.MINUTE, 45);
         calendar_read_csv.set(Calendar.SECOND, 0);
         calendar_read_csv.set(Calendar.MILLISECOND, 0);
 

@@ -275,7 +275,7 @@ public class File_Processs {
             case 1:
                 query.executeUpdate("INSERT INTO SM_FOSS(IDPAIS,IDPLANTA,COUNTANALISIS,IDMUESTRA_ORIGINAL,IDMUESTRA,IDTIPO,LINEA,VALOR1,TIME_ANALISIS) "
                         + "VALUES('SV','SV01','" + count + "','" + nueva_mues + "','" + muestra + "','" + t + "'," + c_fila + "," + campo_valor + ",TO_DATE('" + fecha + "','YYYY-MM-DD HH24:MI:SS'))");
-                System.out.println(valor);
+                //System.out.println(valor);
                 break;
             case 2:
                 switch (t_analisis) {
@@ -289,7 +289,7 @@ public class File_Processs {
                         query.executeUpdate("UPDATE SM_FOSS SET VALOR4='" + campo_valor + "' WHERE LINEA=" + c_fila + " AND COUNTANALISIS='" + count + "'");
                         break;
                 }
-                System.out.println(valor);
+                //System.out.println(valor);
                 break;
         }
     }
