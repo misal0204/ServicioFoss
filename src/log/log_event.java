@@ -10,24 +10,49 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+/*
+    @Creado el 04 de febrero de 2016, 08:30 PM
+    @Autor: José Misael Recinos V.
+    @version: 08/02/2016
+
+    Clase log_event, dedicado a la captura de eventos que ocurren
+    durante el trabajo de la aplicación, genera un archivo .txt
+    el cual escribe cada proceso que realiza el servicio, como
+    por ejemplo: lectura de archivo csv, copia de archivo csv. 
+*/
+
+
 public class log_event {
 
-    String ruta = "D:\\Harisa\\Librerias para CSV y Java\\Servicio de windows\\log\\log_foss.txt";
+    //Variable de tipo String que proporciona la ruta donde se almacena el archivo txt.
+    String ruta = "D:\\Harisa\\Librerias para CSV y Java\\Servicio de windows\\log\\";
+    //Variable de tipo String que proporciona la ubicación de el archivo CSV.
     String fichero = "D:/Harisa/Librerias para CSV y Java/Servicio de windows/foss_mini.csv";
-
+    
+    
+    /*
+       formatos de de hora y fechas.
+    */
     Date ahora = new Date();
     DateFormat hourFormat = new SimpleDateFormat("HH:mm:ss");
     SimpleDateFormat formateador = new SimpleDateFormat("dd-MM-yyyy");
-
+    SimpleDateFormat fecha_file = new SimpleDateFormat("ddMMyyyy");
     String fecha = formateador.format(ahora);
-    String hora = hourFormat.format(ahora);
+    String hora = hourFormat.format(ahora);   
+    String f_f=fecha_file.format(ahora); // f_f =fecha foss
+    
+    //ubicación mas nombre de archivo.  
+    String file_log = "log_"+f_f+"_foss.txt";
 
+    //Mensajes que se escriben el archivo txt, 
     String MensajeInicio = "Inicio de registro: " + fecha + " - Hora: " + hora;
     String fh = "fecha: " + fecha + " - Hora: " + hora;
     String inicio = hora;
 
+    
     public void LogFoss(String mensaje) {
-
+        ruta = ruta += file_log;
+        
         File file = new File(ruta);
         BufferedWriter bw;
         try {
@@ -73,9 +98,9 @@ public class log_event {
         //OBTENEMOS EL BUFFER DE SALIDA
         BufferedReader entrada = new BufferedReader(new InputStreamReader(proceso.getInputStream()));
         String tmp;
+        
         while ((tmp = entrada.readLine()) != null) {
             System.out.println(tmp);
-
         }
         entrada.close();
     }

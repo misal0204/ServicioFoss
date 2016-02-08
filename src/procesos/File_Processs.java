@@ -38,7 +38,7 @@ public class File_Processs {
 
     public String campo;
     public String valor;
-    public String mensaje_log = "";
+    public String mensaje_log = "|-|Muestra ingresada: ";
     List<FileCSV> valores_csv = new ArrayList<>();
 
     private String[] valores_campos
@@ -69,6 +69,7 @@ public class File_Processs {
     private int count_filas = 0;
     private int ingresar = 0;
     private int registro = 0;
+    private int imp = 0;
     private String fecha_muestra;
     private String tipo_analisis;
 
@@ -142,11 +143,9 @@ public class File_Processs {
                                 muestra = file.getValor();
                                 fecha_muestra = c.substring(12, 31);
                                 muestra_nueva = muestra;
-                                //cambiar parametro "2015" por la variable anno
+                                //cambiar parametro "2015" por la variable anno                             
                                 muestra_nueva = muestra.replace(String.valueOf(anno), "SV01");
                                 //muestra_nueva = muestra.replace(String.valueOf("2015"), "M201");
-
-                                mensaje_log = "|-|Muestra ingresada: " + muestra_nueva + " ";
 
                             } else if (valores_campos[count_campos].equals(valores_campos[1])) {
                                 t = file.getValor();
@@ -155,6 +154,7 @@ public class File_Processs {
                             } else if (valores_campos[count_campos].equals(valores_campos[2])) {
                                 countAnalisis = file.getValor();
                                 cabecera = 1;
+                                mensaje_log = mensaje_log += muestra_nueva + " número análisis: " + countAnalisis;
                             } else {
 
                                 if (valores_campos[count_campos].equals(valores_campos[3])
@@ -163,7 +163,6 @@ public class File_Processs {
                                         || valores_campos[count_campos].equals(valores_campos[18])) {
                                     tipo_analisis = file.getValor();
                                 } else {
-
                                     if (tipo_analisis.equals("Proteina")) {
                                         count_filas++;
                                         insertSMFossv(q, cabecera, countAnalisis, muestra_nueva, muestra, tipo, count_filas, fecha_muestra, tipo_analisis, c, file.getValor());
@@ -173,9 +172,11 @@ public class File_Processs {
                                         cabecera = 2;
                                         insertSMFossv(q, cabecera, countAnalisis, muestra_nueva, muestra, tipo, count_filas, fecha_muestra, tipo_analisis, c, file.getValor());
                                         count_filas = count_filas == fila_default ? 0 : count_filas;
+                                        imp = 1;
                                     }
                                 }
                             }
+
                             if ((count_campos) < valores_campos.length - 1) {
                                 count_campos++;
                             } else {
@@ -185,20 +186,20 @@ public class File_Processs {
                     } else if (ingresar == 2) {
                         registro = 1;
                     }
+
+                    if (imp == 1) {
+                        new log_event().LogFoss(mensaje_log + " Registro ingresado correctamente");
+                        mensaje_log = "";
+                    }
                 }
+            }
+
+            if (imp == 0) {
+                new log_event().LogFoss("No se ingreso ningún registro");
             }
 
             q.close();
             con.close();
-            if (registro == 0) {
-                new log_event().LogFoss("Sin datos ingresados - NO hay muestras nuevas");
-            } else {
-
-                mensaje_log += " |-|Inserción de datos realizado|-| ";
-                mensaje_log += "Finalizado|-|";
-                registro = 0;
-                new log_event().LogFoss(mensaje_log);
-            }
         } catch (FileNotFoundException e) {
             System.err.println("Error en archivo: " + e.getMessage());
             new log_event().LogFoss("Error en archivo: método ReadCSV: " + e.getMessage());
@@ -237,7 +238,7 @@ public class File_Processs {
 
                 Files.deleteIfExists(TO);
                 Files.copy(FROM, TO, options);
-                Files.deleteIfExists(FROM);
+                //Files.deleteIfExists(FROM);
                 new log_event().LogFoss("Copia de registro");
 
             } catch (Exception e) {
@@ -248,7 +249,7 @@ public class File_Processs {
             try {
 
                 Files.copy(FROM, TO, options);
-                Files.deleteIfExists(FROM);
+                //Files.deleteIfExists(FROM);
                 new log_event().LogFoss("Creación de registro");
             } catch (Exception e) {
                 System.err.println("Error en creacion de registro");
