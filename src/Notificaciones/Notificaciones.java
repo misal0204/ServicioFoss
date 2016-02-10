@@ -41,9 +41,7 @@ public class Notificaciones {
             public void run() {
                 i++;
                 progressBar.setValue(i);
-                if (i == 100) {
-                    JOptionPane.showMessageDialog(null, "Fin de mantenimiento");
-
+                if (i == 1000) {
                     f.dispose();
                     i=0;
                     tiempo_bar.cancel();
@@ -51,6 +49,6 @@ public class Notificaciones {
             }
         };
 
-        tiempo_bar.schedule(tiempo_barprogress, 0, 100);
+        tiempo_bar.schedule(tiempo_barprogress, 0, 1000);
     }
 }

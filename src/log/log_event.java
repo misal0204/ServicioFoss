@@ -88,20 +88,4 @@ public class log_event {
             System.err.println("Error en archivo log: " + e.getMessage());
         }
     }
-
-    public void procesosWindows() throws IOException {
-        // LLAMAMOS LA VARIABLE DE ENTORNO WINDOWS Y EL PROGRAMA Q GESTIONA
-        // LOS PROCESOS
-        String consola = System.getenv("windir") + "\\System32\\" + "tasklist.exe";
-        // Ejecutamos el comando
-        Process proceso = Runtime.getRuntime().exec(consola);
-        //OBTENEMOS EL BUFFER DE SALIDA
-        BufferedReader entrada = new BufferedReader(new InputStreamReader(proceso.getInputStream()));
-        String tmp;
-        
-        while ((tmp = entrada.readLine()) != null) {
-            System.out.println(tmp);
-        }
-        entrada.close();
-    }
 }

@@ -14,8 +14,8 @@ import procesos.File_Processs;
  */
 public class Servicios {
 
-    private int segundos_read = 60;
-    private int segundos_copy = 120;
+    private int segundos_read = 5;
+    private int segundos_copy = 8;
     Timer tiempo_notificacion;
     
     Servicios()
@@ -29,8 +29,8 @@ public class Servicios {
         Calendar calendar_copy = Calendar.getInstance();
 
         //calendar_copy.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
-        calendar_copy.set(Calendar.HOUR, 10);
-        calendar_copy.set(Calendar.MINUTE, 15);
+        calendar_copy.set(Calendar.HOUR, 9);
+        calendar_copy.set(Calendar.MINUTE, 30);
         calendar_copy.set(Calendar.SECOND, 0);
         calendar_copy.set(Calendar.MILLISECOND, 0);
 
@@ -39,7 +39,7 @@ public class Servicios {
             @Override
             public void run() {
 
-                JOptionPane.showMessageDialog(null, "Se iniciara el mantenimiento, no utilice el equipo (foss)");
+                //JOptionPane.showMessageDialog(null, "Se iniciara el mantenimiento, no utilice el equipo (foss)");
                 File_Processs copy_csv = new File_Processs();
                 new log_event().LogFoss("Copia de archivo");
                 copy_csv.copyFile();
@@ -47,7 +47,7 @@ public class Servicios {
 
             }
         };
-        tiempo_notificacion.schedule(realizar_copia, 0, segundos_copy * 1000);
+        tiempo_notificacion.schedule(realizar_copia,calendar_copy.getTime(), segundos_copy * 60 * 1000);
     }
 
     public void Servicio_ReadCSV() {
@@ -82,6 +82,6 @@ public class Servicios {
                 file_csv.ReadCSV();
             }
         };
-        tiempo_notificacion.schedule(recoger_muestras, 0, segundos_read * 1000);
+        tiempo_notificacion.schedule(recoger_muestras, 0, segundos_read * 60 * 1000);
     }
 }

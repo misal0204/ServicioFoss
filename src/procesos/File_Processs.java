@@ -38,7 +38,7 @@ public class File_Processs {
 
     public String campo;
     public String valor;
-    public String mensaje_log = "|-|Muestra ingresada: ";
+    public String mensaje_log;
     List<FileCSV> valores_csv = new ArrayList<>();
 
     private String[] valores_campos
@@ -154,7 +154,9 @@ public class File_Processs {
                             } else if (valores_campos[count_campos].equals(valores_campos[2])) {
                                 countAnalisis = file.getValor();
                                 cabecera = 1;
-                                mensaje_log = mensaje_log += muestra_nueva + " número análisis: " + countAnalisis;
+                                mensaje_log ="|-|Muestra ingresada: ";
+                                
+                                mensaje_log=mensaje_log += muestra_nueva + " número análisis: " + countAnalisis;
                             } else {
 
                                 if (valores_campos[count_campos].equals(valores_campos[3])
