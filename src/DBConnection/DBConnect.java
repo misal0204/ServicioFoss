@@ -46,6 +46,15 @@ public class DBConnect {
             System.err.println("Coneccion fallida: "+ex.getMessage());
             new log_event().LogFoss("Conexión a base de datos fallida: "+ex.getMessage());
             return null;
-        }       
+        }
+        catch(NoClassDefFoundError e)
+        {
+            System.err.println("Error en clases: "+ e.getMessage());
+            return null;
+        }catch(NullPointerException ne)
+        {
+         System.err.println("Erro null pointer in DBConnection:" +ne.getMessage());
+         return null;
+        }
     } //Cierre de método Connect
 }

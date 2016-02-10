@@ -209,6 +209,8 @@ public class File_Processs {
         } catch (SQLException ex) {
             Logger.getLogger(File_Processs.class.getName()).log(Level.SEVERE, null, ex);
             new log_event().LogFoss("SQLException, método ReadCSV: " + ex.getSQLState());
+        } catch (NullPointerException ne) {
+            System.err.println("Erro null pointer in read file_process:" + ne.getMessage());
         }
     }
 
@@ -244,7 +246,10 @@ public class File_Processs {
             } catch (Exception e) {
                 System.err.println("Error en copia de registro");
                 new log_event().LogFoss("Error en copia de registro");
+            } catch (NoClassDefFoundError e) {
+                System.err.println("Error en clases file_process copy: " + e.getMessage());
             }
+
         } else {
             try {
 
@@ -254,6 +259,8 @@ public class File_Processs {
             } catch (Exception e) {
                 System.err.println("Error en creacion de registro");
                 new log_event().LogFoss("Error en copia de registro");
+            } catch (NoClassDefFoundError e) {
+                System.err.println("Error en clases file_process create: " + e.getMessage());
             }
         }
     }
@@ -317,6 +324,12 @@ public class File_Processs {
         } catch (SQLException ex) {
             Logger.getLogger(File_Processs.class.getName()).log(Level.SEVERE, null, ex);
             ret = 0;
+        } catch (NoClassDefFoundError e) {
+            System.err.println("Error en clases: " + e.getMessage());
+            ret = 0;
+        }
+        catch (NullPointerException ne) {
+            System.err.println("Erro null pointer in read findMuestra:" + ne.getMessage());
         }
         return ret;
     }

@@ -14,8 +14,8 @@ import procesos.File_Processs;
  */
 public class Servicios {
 
-    private int segundos_read = 120;
-    private int segundos_copy = 240;
+    private int segundos_read = 60;
+    private int segundos_copy = 120;
     Timer tiempo_notificacion;
     
     Servicios()
@@ -47,7 +47,7 @@ public class Servicios {
 
             }
         };
-        tiempo_notificacion.schedule(realizar_copia, calendar_copy.getTime(), segundos_copy * 1000);
+        tiempo_notificacion.schedule(realizar_copia, 0, segundos_copy * 1000);
     }
 
     public void Servicio_ReadCSV() {
@@ -82,6 +82,6 @@ public class Servicios {
                 file_csv.ReadCSV();
             }
         };
-        tiempo_notificacion.schedule(recoger_muestras, calendar_read_csv.getTime(), segundos_read * 1000);
+        tiempo_notificacion.schedule(recoger_muestras, 0, segundos_read * 1000);
     }
 }

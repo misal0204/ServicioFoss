@@ -47,8 +47,9 @@ public class DBReadParameters {
         } catch (SQLException e) {
             System.err.println("Error en recuperar parametros: " + e.getMessage());
             new log_event().LogFoss("Error en recuperar parametros: " + e.getMessage());
+        } catch (NullPointerException ne) {
+            System.err.println("Erro null pointer in DBReadparameters:" + ne.getMessage());          
         }
-
         return resultado_consulta;
     }
 
