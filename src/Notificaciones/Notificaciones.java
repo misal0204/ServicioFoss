@@ -6,7 +6,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
 import javax.swing.border.TitledBorder;
 import static serviciocsv.ServicioCSV.i;
@@ -29,7 +28,7 @@ public class Notificaciones {
         progressBar.setBorder(border);
         content.add(progressBar, BorderLayout.CENTER);
         f.setSize(450, 100);
-        f.setLocation(450,300);
+        f.setLocation(450, 300);
         f.setVisible(true);
 
         Timer tiempo_bar;
@@ -43,12 +42,11 @@ public class Notificaciones {
                 progressBar.setValue(i);
                 if (i == 1000) {
                     f.dispose();
-                    i=0;
+                    i = 0;
                     tiempo_bar.cancel();
                 }
             }
         };
-
         tiempo_bar.schedule(tiempo_barprogress, 0, 1000);
     }
 }

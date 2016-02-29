@@ -39,12 +39,10 @@ public class DBConnect {
             Connection conn;
             DriverManager.registerDriver(new oracle.jdbc.OracleDriver());
             conn= DriverManager.getConnection("jdbc:oracle:thin:@"+INSTANCIA+":"+PUERTO+":"+DB,USER,PASS);
-            //new log_event().LogFoss("Connect a: "+DB);
             return conn;
         } catch (SQLException ex) {
             Logger.getLogger(DBConnect.class.getName()).log(Level.SEVERE, null, ex);
             System.err.println("Coneccion fallida: "+ex.getMessage());
-            new log_event().LogFoss("Conexión a base de datos fallida: "+ex.getMessage());
             return null;
         }
         catch(NoClassDefFoundError e)

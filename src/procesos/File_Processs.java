@@ -15,14 +15,17 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.DateFormat;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import log.log_event;
+import log.LogEvent;
 
 public class File_Processs {
 
@@ -38,7 +41,6 @@ public class File_Processs {
 
     public String campo;
     public String valor;
-    public String mensaje_log;
     List<FileCSV> valores_csv = new ArrayList<>();
 
     private String[] valores_campos
@@ -78,7 +80,6 @@ public class File_Processs {
             DBConnect db = new DBConnect();
             Connection con = db.Connect();
             Statement q;
-
             ResultSet result;
             q = con.createStatement();
 
@@ -86,7 +87,7 @@ public class File_Processs {
             int anno = fecha.get(Calendar.YEAR);
 
             String muestra = null;
-            String muestra_nueva = null;
+            //String muestra_nueva = null;
             String t, tipo = null;
             String countAnalisis = null;
             String resultado_fecha = "";
@@ -138,25 +139,25 @@ public class File_Processs {
 
                         StringBuffer campo_comparar = campo_raiz.append(valores_campos[count_campos]);
 
+                        //new LogEvent().LogAlveo("Inicio de Registro");
+                        //new LogEvent().LogAlveo("Resultados");
                         if (c.contentEquals(campo_comparar)) {
                             if (valores_campos[count_campos].equals(valores_campos[0])) {
                                 muestra = file.getValor();
-                                fecha_muestra = c.substring(12, 31);
-                                muestra_nueva = muestra;
-                                //cambiar parametro "2015" por la variable anno                             
-                                muestra_nueva = muestra.replace(String.valueOf(anno), "SV01");
-                                //muestra_nueva = muestra.replace(String.valueOf("2015"), "M201");
+                                new LogEvent().LogAlveo("----------------------***********----------------------");
+                                new LogEvent().LogAlveo("Fecha y hora de captura: "+getDate());
+                                new LogEvent().LogAlveo("Muestra: " + muestra);
 
+                                fecha_muestra = c.substring(12, 31);
                             } else if (valores_campos[count_campos].equals(valores_campos[1])) {
                                 t = file.getValor();
+                                new LogEvent().LogAlveo("Tipo: " + t);
                                 tipo = t.equals("Harina de Trigo") ? "H" : "T";
 
                             } else if (valores_campos[count_campos].equals(valores_campos[2])) {
                                 countAnalisis = file.getValor();
+                                new LogEvent().LogAlveo("Analisis #: " + countAnalisis);
                                 cabecera = 1;
-                                mensaje_log ="|-|Muestra ingresada: ";
-                                
-                                mensaje_log=mensaje_log += muestra_nueva + " número análisis: " + countAnalisis;
                             } else {
 
                                 if (valores_campos[count_campos].equals(valores_campos[3])
@@ -164,15 +165,18 @@ public class File_Processs {
                                         || valores_campos[count_campos].equals(valores_campos[13])
                                         || valores_campos[count_campos].equals(valores_campos[18])) {
                                     tipo_analisis = file.getValor();
+                                    new LogEvent().LogAlveo(valores_campos[count_campos] + " : " + tipo_analisis);
                                 } else {
                                     if (tipo_analisis.equals("Proteina")) {
                                         count_filas++;
-                                        insertSMFossv(q, cabecera, countAnalisis, muestra_nueva, muestra, tipo, count_filas, fecha_muestra, tipo_analisis, c, file.getValor());
+                                        new LogEvent().LogAlveo("Insertando: " + tipo_analisis + ": " + file.getValor());
+                                        insertSMFossv(q, cabecera, countAnalisis, muestra, tipo, count_filas, fecha_muestra, tipo_analisis, c, file.getValor());
                                         count_filas = count_filas == 4 ? 0 : count_filas;
                                     } else {
                                         count_filas++;
                                         cabecera = 2;
-                                        insertSMFossv(q, cabecera, countAnalisis, muestra_nueva, muestra, tipo, count_filas, fecha_muestra, tipo_analisis, c, file.getValor());
+                                        new LogEvent().LogAlveo("Insertando: " + tipo_analisis + ": " + file.getValor());
+                                        insertSMFossv(q, cabecera, countAnalisis, muestra, tipo, count_filas, fecha_muestra, tipo_analisis, c, file.getValor());
                                         count_filas = count_filas == fila_default ? 0 : count_filas;
                                         imp = 1;
                                     }
@@ -188,29 +192,20 @@ public class File_Processs {
                     } else if (ingresar == 2) {
                         registro = 1;
                     }
-
-                    if (imp == 1) {
-                        new log_event().LogFoss(mensaje_log + " Registro ingresado correctamente");
-                        mensaje_log = "";
-                    }
                 }
             }
 
             if (imp == 0) {
-                new log_event().LogFoss("No se ingreso ningún registro");
             }
 
             q.close();
             con.close();
         } catch (FileNotFoundException e) {
             System.err.println("Error en archivo: " + e.getMessage());
-            new log_event().LogFoss("Error en archivo: método ReadCSV: " + e.getMessage());
         } catch (IOException e) {
             System.err.println("Error en I/O: " + e.getMessage());
-            new log_event().LogFoss("Error en I/O: método ReadCSV: " + e.getMessage());
         } catch (SQLException ex) {
             Logger.getLogger(File_Processs.class.getName()).log(Level.SEVERE, null, ex);
-            new log_event().LogFoss("SQLException, método ReadCSV: " + ex.getSQLState());
         } catch (NullPointerException ne) {
             System.err.println("Erro null pointer in read file_process:" + ne.getMessage());
         }
@@ -243,13 +238,12 @@ public class File_Processs {
                 Files.deleteIfExists(TO);
                 Files.copy(FROM, TO, options);
                 //Files.deleteIfExists(FROM);
-                new log_event().LogFoss("Copia de registro");
+                new LogEvent().LogAlveo("Copia de archivo");
 
             } catch (Exception e) {
                 System.err.println("Error en copia de registro");
-                new log_event().LogFoss("Error en copia de registro");
             } catch (NoClassDefFoundError e) {
-                System.err.println("Error en clases file_process copy: " + e.getMessage());
+                System.err.println("Error de clases");
             }
 
         } else {
@@ -257,10 +251,9 @@ public class File_Processs {
 
                 Files.copy(FROM, TO, options);
                 //Files.deleteIfExists(FROM);
-                new log_event().LogFoss("Creación de registro");
+                new LogEvent().LogAlveo("Creación de archivo");
             } catch (Exception e) {
                 System.err.println("Error en creacion de registro");
-                new log_event().LogFoss("Error en copia de registro");
             } catch (NoClassDefFoundError e) {
                 System.err.println("Error en clases file_process create: " + e.getMessage());
             }
@@ -277,13 +270,13 @@ public class File_Processs {
         return size;
     }
 
-    public void insertSMFossv(Statement query, int cab, String count, String muestra, String nueva_mues, String t, int c_fila, String fecha, String t_analisis, String campo, String valor) throws SQLException {
+    public void insertSMFossv(Statement query, int cab, String count, String muestra, String t, int c_fila, String fecha, String t_analisis, String campo, String valor) throws SQLException {
         Double campo_valor = Double.parseDouble(valor);
 
         switch (cab) {
             case 1:
-                query.executeUpdate("INSERT INTO SM_FOSS(IDPAIS,IDPLANTA,COUNTANALISIS,IDMUESTRA_ORIGINAL,IDMUESTRA,IDTIPO,LINEA,VALOR1,TIME_ANALISIS) "
-                        + "VALUES('SV','SV01','" + count + "','" + nueva_mues + "','" + muestra + "','" + t + "'," + c_fila + "," + campo_valor + ",TO_DATE('" + fecha + "','YYYY-MM-DD HH24:MI:SS'))");
+                query.executeUpdate("INSERT INTO SM_FOSS(IDPAIS,IDPLANTA,COUNTANALISIS,IDMUESTRA,IDTIPO,LINEA,VALOR1,TIME_ANALISIS) "
+                        + "VALUES('SV','SV01','" + count + "','" + muestra + "','" + t + "'," + c_fila + "," + campo_valor + ",TO_DATE('" + fecha + "','YYYY-MM-DD HH24:MI:SS'))");
                 //System.out.println(valor);
                 break;
             case 2:
@@ -329,10 +322,21 @@ public class File_Processs {
         } catch (NoClassDefFoundError e) {
             System.err.println("Error en clases: " + e.getMessage());
             ret = 0;
-        }
-        catch (NullPointerException ne) {
+        } catch (NullPointerException ne) {
             System.err.println("Erro null pointer in read findMuestra:" + ne.getMessage());
         }
         return ret;
     }
+
+    public String getDate() {
+        Date ahora = new Date();
+        DateFormat hourFormat = new SimpleDateFormat("HH:mm:ss");
+        SimpleDateFormat formateador = new SimpleDateFormat("dd-MM-yyyy");
+        String fecha = formateador.format(ahora);
+        String hora = hourFormat.format(ahora);
+        String fh = "fecha: " + fecha + " - Hora: " + hora;
+
+        return fh;
+    }
+
 }
