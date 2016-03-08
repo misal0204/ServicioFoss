@@ -109,7 +109,8 @@ public class File_Processs {
             }
 
             CsvReader read_csv = new CsvReader(fichero);
-
+            
+            
             while (read_csv.readRecord()) {
                 String cam = read_csv.get(0);
                 String val = read_csv.get(1);

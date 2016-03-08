@@ -5,7 +5,6 @@ import java.util.Calendar;
 import java.util.Timer;
 import java.util.TimerTask;
 import javax.swing.JOptionPane;
-import log.log_event;
 import procesos.File_Processs;
 
 /**
@@ -41,7 +40,6 @@ public class Servicios {
 
                 //JOptionPane.showMessageDialog(null, "Se iniciara el mantenimiento, no utilice el equipo (foss)");
                 File_Processs copy_csv = new File_Processs();
-                new log_event().LogFoss("Copia de archivo");
                 copy_csv.copyFile();
                 noti.Aviso_emergente();
 
@@ -78,7 +76,6 @@ public class Servicios {
 
                 System.out.println("Tamaño de archivo: ");
                 System.out.println(file_csv.SizeFile(file_csv.fichero) + "Mb");
-                new log_event().LogFoss("Inicio de lectura de datos");
                 file_csv.ReadCSV();
             }
         };

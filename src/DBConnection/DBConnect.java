@@ -5,8 +5,6 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import log.log_event;
-
 /*
    @Creado el 03 de febrero de 2016, 08:30 AM
    @Autor: José Misael Recinos V.
